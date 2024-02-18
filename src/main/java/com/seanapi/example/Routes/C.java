@@ -3,6 +3,8 @@ package com.seanapi.example.Routes;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @Controller
 public class C {
@@ -12,8 +14,7 @@ public class C {
         return "Home";
     }
 
-    @GetMapping("/login")
-    public String login(){
-        return "Login";
-    }
+  
+
+    
 }
