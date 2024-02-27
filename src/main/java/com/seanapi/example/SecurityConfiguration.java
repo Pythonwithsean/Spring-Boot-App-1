@@ -10,38 +10,36 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-
-
-
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-
-    //This allows for filtered pages to be access by user 
+    // This allows for filtered pages to be access by user
     @Bean
-    protected SecurityFilterChain filter(HttpSecurity http) throws Exception{
-        http.authorizeHttpRequests( auth -> (auth.requestMatchers("/home").permitAll()).anyRequest().authenticated()).formLogin(Customizer.withDefaults());
+    protected SecurityFilterChain filter(HttpSecurity http) throws Exception {
+        /**
+         * 
+         * authorizeHttpRequests(auth ->
+         * (auth.requestMatchers("/home").permitAll()).anyRequest().authenticated())
+         * .formLogin(Customizer.withDefaults());
+         */
+
+        http.authorizeHttpRequests(req -> req.anyRequest().authenticated()).formLogin(form -> {
+            form.loginPage("/login").defaultSuccessUrl("/home", true).permitAll();
+        });
         return http.build();
     }
 
-    
-
-    
-
-
-
     @Bean
-    public InMemoryUserDetailsManager userDetailsService(){
-        UserDetails UserDetails = User.withUsername("user").password("password").roles("user").build();
-        String pass = UserDetails.getPassword();
-        System.out.println(pass);
-        return new InMemoryUserDetailsManager(UserDetails);
+    public InMemoryUserDetailsManager Auth() {
+        PasswordEncoder pe = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        UserDetails admin = User.withUsername("ADMIN").password(pe.encode("ADMIN")).roles("admin").build();
+        return new InMemoryUserDetailsManager(admin);
     }
-
- 
 
 }
